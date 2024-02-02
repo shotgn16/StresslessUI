@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34511.84
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StresslessUI", "StresslessUI.csproj", "{B47C24A6-AF2E-409B-A2D4-6403312DA467}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B47C24A6-AF2E-409B-A2D4-6403312DA467}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B47C24A6-AF2E-409B-A2D4-6403312DA467}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B47C24A6-AF2E-409B-A2D4-6403312DA467}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B47C24A6-AF2E-409B-A2D4-6403312DA467}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {478D1A6F-8A68-4ADC-8B2E-ECF7D98B4585}
+	EndGlobalSection
+EndGlobal
