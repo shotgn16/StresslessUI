@@ -16,10 +16,10 @@
         <TextBox x:Name="tbx_lastname" HorizontalAlignment="Left" Margin="115,142,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
         <TextBlock HorizontalAlignment="Left" Margin="30,192,0,0" TextWrapping="Wrap" Text="What days do you work (Weekly)?" VerticalAlignment="Top" FontSize="16"/>
         <TextBox x:Name="tbx_workingDays" HorizontalAlignment="Left" Margin="30,218,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="238" Height="36"/>
-        <TextBlock HorizontalAlignment="Left" Margin="30,256,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="8" Width="238" Foreground="Red"><Run Text="Please separate each day using a space and comma as shown."/><LineBreak/><Run Text="E.g. Monday, Tuesday, Wedneday..."/></TextBlock>
+        <TextBlock HorizontalAlignment="Left" Margin="30,256,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="11" Width="340" Foreground="Red"><Run Text="Please separate each day using a space and comma as shown."/><LineBreak/><Run Text="E.g. Monday, Tuesday, Wedneday..."/></TextBlock>
         <TextBlock HorizontalAlignment="Left" Margin="30,295,0,0" TextWrapping="Wrap" Text="Work start time:" VerticalAlignment="Top" FontSize="16"/>
-        <TextBox x:Name="tbx_startTime" HorizontalAlignment="Left" Margin="149,298,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="119"/>
-        <TextBlock HorizontalAlignment="Left" Margin="30,354,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="8" Width="238" Foreground="Red" Text="If your set start/finish times are different each day, please use the most frequent start/finish time."/>
+        <TextBox x:Name="tbx_startTime" HorizontalAlignment="Left" Margin="153,298,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="115"/>
+        <TextBlock HorizontalAlignment="Left" Margin="30,349,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="11" Width="310" Foreground="Red" Text="If your set start/finish times are different each day, please use the most frequent start/finish time."/>
         <TextBlock HorizontalAlignment="Left" Margin="30,323,0,0" TextWrapping="Wrap" Text="Work finish time:" VerticalAlignment="Top" FontSize="16"/>
         <TextBox x:Name="tbx_finishTime" HorizontalAlignment="Left" Margin="153,326,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="115"/>
         <TextBlock HorizontalAlignment="Left" Margin="425,109,0,0" TextWrapping="Wrap" Text="Public calendar link (iCalendar)" VerticalAlignment="Top" FontSize="16"/>

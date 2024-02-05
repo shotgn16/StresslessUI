@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using StresslessUI.DataModels;
 using StresslessUI.Http;
 using StresslessUI.Logic;
+using StresslessUI.Registration;
 using System.IO;
 using System.Windows;
 using static System.Net.WebRequestMethods;
@@ -12,27 +13,18 @@ namespace StresslessUI
     /// <summary>
     /// Interaction logic for RegistrationForm.xaml
     /// </summary>
-    public partial class RegistrationForm : Window
+    public partial class RegistrationForm : Window, IRegistrationForm
     {
-        private Notifi _notification;
-        private ILogger _logger;
-        private httpMethods _httpMethods;
-        private CalendarImport _calenderImport;
-
-        public RegistrationForm() { }
-        public RegistrationForm(ILogger logger, CalendarImport calenderImport, httpMethods httpMethods)
+        private ILogger<RegistrationForm> _logger;
+        private IHttpClientMethods _httpMethods;
+        private ICalenderImport _calenderImport;
+        public RegistrationForm(ILogger<RegistrationForm> logger, ICalenderImport calenderImport, IHttpClientMethods httpMethods)
         {
             _logger = logger;
-            InitializeComponent();
             _httpMethods = httpMethods;
             _calenderImport = calenderImport;
-        }
 
-        public RegistrationForm(int nc)
-        {
             InitializeComponent();
-                _notification = new Notifi("INFO", "Please submit a new registration\nform to continue");
-                    _notification.Show();
         }
 
         private async void btn_saveConfiguration_Click(object sender, RoutedEventArgs e)
@@ -60,6 +52,11 @@ namespace StresslessUI
             {
                 _logger.LogError(ex.Message, ex);
             }
+        }
+
+        public void Show()
+        {
+            this.Show();
         }
     }
 }

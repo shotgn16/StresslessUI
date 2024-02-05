@@ -1,6 +1,6 @@
 ﻿namespace StresslessUI.DataModels
 {
-    internal class ConfigurationModel
+    public class ConfigurationModel
     {
         public Guid ID { get; set; }
         public string FirstName { get; set; }

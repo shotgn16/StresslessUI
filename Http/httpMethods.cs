@@ -9,11 +9,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace StresslessUI.Http
 {
-    public class httpMethods : Controller, IDisposable
+    public class httpMethods : Controller, IHttpClientMethods, IDisposable
     {
         private ILogger<httpMethods> _logger;
         private HttpWrapper _httpWrapper;
-
         public httpMethods(ILogger<httpMethods> logger, HttpWrapper httpWrapper) 
         {
             _httpWrapper = httpWrapper;
@@ -52,7 +51,7 @@ namespace StresslessUI.Http
             }
         }
 
-        internal async Task<ConfigurationModel> GetConfiguration()
+        public async Task<ConfigurationModel> GetConfiguration()
         {
             ConfigurationModel _config = new ConfigurationModel();
 
@@ -77,7 +76,7 @@ namespace StresslessUI.Http
         public void Dispose() => GC.Collect();
 
 
-        internal async Task<bool> DeleteConfiguration()
+        public async Task<bool> DeleteConfiguration()
         {
             bool Value = true;
 
@@ -97,7 +96,7 @@ namespace StresslessUI.Http
             return Value;
         }
 
-        internal async Task<bool> PromptReminder(bool Value = false)
+        public async Task<bool> PromptReminder(bool Value = false)
         {
             if (!string.IsNullOrEmpty(OAuthTokenModel._model.token))
             {

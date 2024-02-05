@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using StresslessUI.Settings;
 using System.Windows;
 
 namespace StresslessUI
@@ -6,10 +7,9 @@ namespace StresslessUI
     /// <summary>
     /// Interaction logic for Settings_2.xaml
     /// </summary>
-    public partial class Settings_2 : Window
+    public partial class Settings_2 : Window, ISettings
     {
         private ILogger _logger;
-        public Settings_2() { }
         public Settings_2(ILogger<Settings_2> logger)
         {
             _logger = logger;
@@ -26,6 +26,11 @@ namespace StresslessUI
             }
 
             AppSettings.Default.Save();
+        }
+
+        public void Show()
+        {
+            this.Show();
         }
     }
 }

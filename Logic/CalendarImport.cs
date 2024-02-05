@@ -5,11 +5,12 @@ using System.Net;
 
 namespace StresslessUI.Logic
 {
-    public class CalendarImport : Controller, IDisposable
+    public class CalendarImport : Controller, ICalenderImport, IDisposable
     {
         private ILogger<CalendarImport> _logger;
         public static List<CalendarModel> _List;
 
+        public CalendarImport() { }
         public CalendarImport(ILogger<CalendarImport> logger)
         {
             _logger = logger;

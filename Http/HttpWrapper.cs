@@ -5,7 +5,7 @@ using System.Net;
 
 namespace StresslessUI.Http
 {
-    public class HttpWrapper : Controller, IDisposable
+    public class HttpWrapper : Controller, IHttpWrapper, IDisposable
     {
         private readonly IHttpClientWrapper _client;
         private readonly ILogger<HttpWrapper> _logger;

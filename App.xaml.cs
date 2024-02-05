@@ -3,6 +3,10 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using NLog.Web;
+using StresslessUI.Http;
+using StresslessUI.Logic;
+using StresslessUI.Registration;
+using StresslessUI.Settings;
 using System.Windows;
 
 namespace StresslessUI
@@ -20,6 +24,13 @@ namespace StresslessUI
                 .ConfigureServices((hostContext, services) =>
                 {
                     services.AddSingleton<MainWindow>();
+                    services.AddScoped<IRegistrationForm, RegistrationForm>();
+                    services.AddScoped<ISettings, Settings_2>();
+                    services.AddScoped<ILoggedInForm, LoggedInForm>();
+
+                    services.AddScoped<IHttpWrapper, HttpWrapper>();
+                    services.AddScoped<IHttpClientMethods, httpMethods>();
+                    services.AddScoped<ICalenderImport, CalendarImport>();
 
                 }).ConfigureLogging(logBuilder =>
                 {
@@ -31,11 +42,9 @@ namespace StresslessUI
 
         protected override async void OnStartup(StartupEventArgs e)
         {
-            await AppHost!.StartAsync();
-
             var startupForm = AppHost.Services.GetRequiredService<MainWindow>();
-            startupForm.Show();
 
+            await AppHost!.StartAsync();
             base.OnStartup(e);
         }
 

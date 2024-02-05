@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using StresslessUI.DataModels;
 using StresslessUI.Http;
+using StresslessUI.Registration;
 using StresslessUI.Timer;
 using System.Windows;
 
@@ -13,18 +14,18 @@ namespace StresslessUI
     /// <summary>
     /// Interaction logic for LoggedInForm.xaml
     /// </summary>
-    public partial class LoggedInForm : Window, IDisposable
+    public partial class LoggedInForm : Window, ILoggedInForm, IDisposable
     {
         private ILogger _logger;
-        private httpMethods _httpMethods;
-
-        public LoggedInForm() { }
-        public LoggedInForm(ILogger logger, httpMethods httpMethods)
+        private IRegistrationForm _registrationForm;
+        private IHttpClientMethods _httpMethods;
+        public LoggedInForm(ILogger logger, IHttpClientMethods httpMethods, IRegistrationForm registrationForm)
         {
             _logger = logger;
+            _httpMethods = httpMethods;
+            _registrationForm = registrationForm;
 
             InitializeComponent();
-            _httpMethods = httpMethods;
 
             lbl_firstname.Content = ConfigurationModel._model.FirstName;
                 tbx_displayConfiguration.Text = JsonConvert.SerializeObject(ConfigurationModel._model);
@@ -39,22 +40,20 @@ namespace StresslessUI
 
             if (isDeleted)
             {
-                Notifi n = new Notifi("SUCCESS", "Configuration Successfully Deleted!");
-                    n.Show();
+                MessageBox.Show(
+                    "Configuration Successfully Deleted!", "Information",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
 
         private void btn_changeConfiguration_Click(object sender, RoutedEventArgs e)
         {
-            RegistrationForm form = new RegistrationForm(1);
-                form.Show();
-            this.Hide();
+            _registrationForm.Show();
+                this.Hide();
         }
 
         private void btn_enablePrompts_Click(object sender, RoutedEventArgs e)
         {
-            Notifi notification = new(null, null);
-
             try
             {
                 // Toggle ON/OFF
@@ -71,10 +70,14 @@ namespace StresslessUI
                 switch (PromptTrigger.enablePrompts)
                 {
                     case true:
-                        notification = new Notifi("INFO", "Prompts are enabled!");
+                        MessageBox.Show(
+                            "Prompts are enabled!", "Information",
+                                MessageBoxButton.OK, MessageBoxImage.Information);
                         break;
                     case false:
-                        notification = new Notifi("INFO", "Prompts are dissabled!");
+                        MessageBox.Show(
+                            "Prompts are dissabled!", "Information", 
+                                MessageBoxButton.OK, MessageBoxImage.Information);
                         break;
                 }
             }
@@ -83,8 +86,6 @@ namespace StresslessUI
             {
                 _logger.LogError(ex.Message, ex);
             }
-
-            notification.Show();
         }
 
         public void Dispose() => GC.Collect();

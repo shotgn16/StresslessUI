@@ -2,6 +2,7 @@
 using StresslessUI.Http;
 using System.Printing;
 using System.Timers;
+using System.Windows;
 using static System.Net.WebRequestMethods;
 
 namespace StresslessUI.Timer
@@ -44,8 +45,8 @@ namespace StresslessUI.Timer
 
             if (promptUser)
             {
-                Notifi Notification = new Notifi("INFO", "Time to take a 20 minuit break!");
-                    Notification.Show();
+                MessageBox.Show(
+                    "Time to take a 20 minuit break!", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
             }
 
             await startTimer();

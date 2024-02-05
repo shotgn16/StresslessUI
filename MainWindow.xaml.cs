@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
 using StresslessUI.DataModels;
 using StresslessUI.Http;
+using StresslessUI.Registration;
+using StresslessUI.Settings;
 using System.Windows;
 
 namespace StresslessUI
@@ -10,20 +12,21 @@ namespace StresslessUI
     /// </summary>
     public partial class MainWindow : Window
     {
-        private readonly ILogger _logger;
-        private LoggedInForm LoggedInForm;
-        private httpMethods _httpMethods;
+        private readonly ILogger<MainWindow> _logger;
+        private LoggedInForm _loggedInForm;
+        private ISettings _settingdForm;
+        private IHttpClientMethods _httpMethods;
+        private IRegistrationForm _registrationForm;
 
         public MainWindow() { }
-
-        public MainWindow(ILogger logger, LoggedInForm loggedInForm, httpMethods httpMethods)
+        public MainWindow(ILogger<MainWindow> logger, IRegistrationForm registrationForm, ISettings settingdForm)
         {
             _logger = logger;
-            LoginUser();
+            _settingdForm = settingdForm;
+            _registrationForm = registrationForm;
 
+            LoginUser();
             InitializeComponent();
-            _httpMethods = httpMethods;
-            LoggedInForm = loggedInForm;
         }
 
         private async Task LoginUser()
@@ -34,8 +37,8 @@ namespace StresslessUI
             {
                 if (configExists == true)
                 {
-                    LoggedInForm.Show();
-                        this.Hide();
+                    _loggedInForm.Show();
+                    this.Hide();
                 }
             }
 
@@ -75,10 +78,14 @@ namespace StresslessUI
             settings.Show();
         }
 
+        public async Task InjectRegistration(RegistrationForm registrationForm)
+        {
+
+        }
+
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            RegistrationForm registration = new RegistrationForm();
-            registration.Show();
+            _registrationForm.Show();
         }
     }
 }
