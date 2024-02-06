@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using StresslessUI.DataModels;
-using StresslessUI.Http;
+using StresslessUI.Http.Methods;
 using StresslessUI.Logic;
 using StresslessUI.Registration;
 using System.IO;
@@ -56,7 +56,7 @@ namespace StresslessUI
 
         public void Show()
         {
-            this.Show();
+            this.ShowDialog();
         }
     }
 }

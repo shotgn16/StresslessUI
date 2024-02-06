@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace StresslessUI.LoggedInForm
+namespace StresslessUI.LoggedForm
 {
-    internal interface ILoggedInForm
+    public interface iLoggedIn
     {
         void Show();
     }

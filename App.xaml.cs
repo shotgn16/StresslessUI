@@ -1,13 +1,12 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
-using NLog.Web;
-using StresslessUI.Http;
+using StresslessUI.Http.ErrorHandler;
+using StresslessUI.Http.Methods;
+using StresslessUI.Http.Wrapper;
 using StresslessUI.Logic;
-using StresslessUI.Registration;
-using StresslessUI.Settings;
+using StresslessUI.ServiceProvider;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace StresslessUI
 {
@@ -16,42 +15,64 @@ namespace StresslessUI
     /// </summary>
     public partial class App : Application
     {
-        public static IHost? AppHost { get; private set; }
+        private IServiceProvider _serviceProvider;
 
-        public App()
+        protected override void OnStartup(StartupEventArgs e)
         {
-            AppHost = new HostBuilder()
-                .ConfigureServices((hostContext, services) =>
-                {
-                    services.AddSingleton<MainWindow>();
-                    services.AddScoped<IRegistrationForm, RegistrationForm>();
-                    services.AddScoped<ISettings, Settings_2>();
-                    services.AddScoped<ILoggedInForm, LoggedInForm>();
+            AppDomain appDomain = AppDomain.CurrentDomain;
+                appDomain.UnhandledException += new UnhandledExceptionEventHandler(exceptionHandler.OnUnhandledException);
 
-                    services.AddScoped<IHttpWrapper, HttpWrapper>();
-                    services.AddScoped<IHttpClientMethods, httpMethods>();
-                    services.AddScoped<ICalenderImport, CalendarImport>();
-
-                }).ConfigureLogging(logBuilder =>
-                {
-                    logBuilder.SetMinimumLevel(LogLevel.Trace);
-                    logBuilder.AddNLog();
-
-                }).Build();
-        }
-
-        protected override async void OnStartup(StartupEventArgs e)
-        {
-            var startupForm = AppHost.Services.GetRequiredService<MainWindow>();
-
-            await AppHost!.StartAsync();
             base.OnStartup(e);
+            ConfigureServices();
+            ShowHomePage();
         }
 
-        protected override async void OnExit(ExitEventArgs e)
+        private void ConfigureServices()
         {
-            await AppHost!.StopAsync();
-            base.OnExit(e);
+            // Register WPF Pages...
+            var serviceCollection = new ServiceCollection();
+                serviceCollection.AddSingleton<MainWindow>();
+                serviceCollection.AddScoped<RegistrationForm>();
+                serviceCollection.AddScoped<LoggedInForm>();
+                serviceCollection.AddScoped<SettingsForm>();
+
+            // Register NLog logger
+            serviceCollection.AddLogging(builder => builder.AddNLog());
+            serviceCollection.AddHttpLogging(e =>
+            {
+                e.LoggingFields = Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.All;
+            });
+
+            // Register App Services
+            serviceCollection.AddTransient<IHttpClientMethods, httpMethods>();
+            serviceCollection.AddTransient<IHttpWrapper, HttpWrapper>();
+            serviceCollection.AddTransient<IHttpError, HttpError>();
+            serviceCollection.AddTransient<ICalenderImport, CalendarImport>();
+
+            // Register IHttpClientFactory
+            serviceCollection.AddHttpClient();
+
+            serviceCollection.AddSingleton<Frame>(provider =>
+            {
+                var mainWindow = provider.GetRequiredService<MainWindow>();
+                return new Frame { Content = mainWindow };
+            });
+
+            // Register navigation service
+            serviceCollection.
+                AddSingleton<INaviationService, NavigationService>();
+
+            // Build the container
+            _serviceProvider = serviceCollection.BuildServiceProvider();
+
+            // Set the container as the 'Autofac' DI container
+            ContainerProvider.SetContainerProvider(_serviceProvider);
+        }
+
+        private void ShowHomePage()
+        {
+            var mainPage = _serviceProvider.GetService<MainWindow>();
+            mainPage.ShowDialog();
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
-using StresslessUI.Http;
+using StresslessUI.Http.Methods;
 using System.Printing;
 using System.Timers;
 using System.Windows;

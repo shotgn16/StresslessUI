@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace StresslessUI.Http
+namespace StresslessUI.Http.Methods
 {
     public interface IHttpClientMethods
     {

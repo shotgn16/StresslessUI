@@ -1,8 +1,7 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using StresslessUI.DataModels;
-using StresslessUI.Http;
-using StresslessUI.Registration;
-using StresslessUI.Settings;
+using StresslessUI.Http.Methods;
 using System.Windows;
 
 namespace StresslessUI
@@ -12,23 +11,21 @@ namespace StresslessUI
     /// </summary>
     public partial class MainWindow : Window
     {
-        private readonly ILogger<MainWindow> _logger;
-        private LoggedInForm _loggedInForm;
-        private ISettings _settingdForm;
         private IHttpClientMethods _httpMethods;
-        private IRegistrationForm _registrationForm;
+        private IServiceProvider _serviceProvider;
+        private ILogger<MainWindow> _logger;
 
-        public MainWindow() { }
-        public MainWindow(ILogger<MainWindow> logger, IRegistrationForm registrationForm, ISettings settingdForm)
+        public MainWindow(ILogger<MainWindow> logger, IServiceProvider serviceProvider, IHttpClientMethods httpClientMethods)
         {
             _logger = logger;
-            _settingdForm = settingdForm;
-            _registrationForm = registrationForm;
+            _httpMethods = httpClientMethods;
+            _serviceProvider = serviceProvider;
 
-            LoginUser();
             InitializeComponent();
-        }
+            LoginUser();
 
+            _logger.LogInformation($"MainWindow Loaded! | App Version: 2 | Date: {DateOnly.FromDateTime(DateTime.Now)}");
+        }
         private async Task LoginUser()
         {
             bool configExists = await retrieveConfig();
@@ -37,7 +34,7 @@ namespace StresslessUI
             {
                 if (configExists == true)
                 {
-                    _loggedInForm.Show();
+
                     this.Hide();
                 }
             }
@@ -74,18 +71,14 @@ namespace StresslessUI
 
         private void btn_settings_Click(object sender, RoutedEventArgs e)
         {
-            Settings_2 settings = new Settings_2((ILogger<Settings_2>)_logger);
-            settings.Show();
-        }
-
-        public async Task InjectRegistration(RegistrationForm registrationForm)
-        {
-
+            var settingsPage = _serviceProvider.GetService<SettingsForm>();
+            settingsPage.Show();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            _registrationForm.Show();
+            var registrationPage = _serviceProvider.GetService<RegistrationForm>();
+            registrationPage.Show();
         }
     }
 }

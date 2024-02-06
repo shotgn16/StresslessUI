@@ -6,14 +6,15 @@ using Newtonsoft.Json;
 using StresslessUI.Net;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Mvc;
+using StresslessUI.Http.Wrapper;
 
-namespace StresslessUI.Http
+namespace StresslessUI.Http.Methods
 {
     public class httpMethods : Controller, IHttpClientMethods, IDisposable
     {
         private ILogger<httpMethods> _logger;
-        private HttpWrapper _httpWrapper;
-        public httpMethods(ILogger<httpMethods> logger, HttpWrapper httpWrapper) 
+        private IHttpWrapper _httpWrapper;
+        public httpMethods(ILogger<httpMethods> logger, IHttpWrapper httpWrapper)
         {
             _httpWrapper = httpWrapper;
             _logger = logger;
@@ -104,7 +105,7 @@ namespace StresslessUI.Http
 
                 (string, HttpStatusCode) response = await _httpWrapper.PostAsync($"https://{AppSettings.Default.HostAddress}:7257/PromptReminder",
                     new StringContent(null, Encoding.UTF8, "application/json"));
-                
+
                 Value = Convert.ToBoolean(response.Item1);
 
                 if (response.Item2 != HttpStatusCode.OK)

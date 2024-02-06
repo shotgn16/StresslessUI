@@ -1,10 +1,8 @@
-﻿using Accessibility;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using StresslessUI.DataModels;
-using StresslessUI.Http;
+using StresslessUI.Http.Methods;
+using StresslessUI.LoggedForm;
 using StresslessUI.Registration;
 using StresslessUI.Timer;
 using System.Windows;
@@ -14,12 +12,12 @@ namespace StresslessUI
     /// <summary>
     /// Interaction logic for LoggedInForm.xaml
     /// </summary>
-    public partial class LoggedInForm : Window, ILoggedInForm, IDisposable
+    public partial class LoggedInForm : Window, iLoggedIn, IDisposable
     {
-        private ILogger _logger;
+        private ILogger<LoggedInForm> _logger;
         private IRegistrationForm _registrationForm;
         private IHttpClientMethods _httpMethods;
-        public LoggedInForm(ILogger logger, IHttpClientMethods httpMethods, IRegistrationForm registrationForm)
+        public LoggedInForm(ILogger<LoggedInForm> logger, IHttpClientMethods httpMethods, IRegistrationForm registrationForm)
         {
             _logger = logger;
             _httpMethods = httpMethods;
@@ -86,6 +84,11 @@ namespace StresslessUI
             {
                 _logger.LogError(ex.Message, ex);
             }
+        }
+
+        public void Show()
+        {
+            this.ShowDialog();
         }
 
         public void Dispose() => GC.Collect();

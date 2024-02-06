@@ -2,9 +2,9 @@
 using Microsoft.Extensions.Logging;
 using System.Net.Http;
 
-namespace StresslessUI.Http
+namespace StresslessUI.Http.ErrorHandler
 {
-    public class HttpError : Controller
+    public class HttpError : Controller, IHttpError
     {
         private ILogger<HttpError> logger;
 
