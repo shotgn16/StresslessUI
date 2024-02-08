@@ -1,9 +1,4 @@
 ﻿using StresslessUI.DataModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace StresslessUI.Http.Methods
 {
@@ -13,6 +8,6 @@ namespace StresslessUI.Http.Methods
         Task InsertConfiguration();
         Task<ConfigurationModel> GetConfiguration();
         Task<bool> DeleteConfiguration();
-        Task<bool> PromptReminder(bool Value = false);
+        Task<string> PromptReminder(string Value = null);
     }
 }

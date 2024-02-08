@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace StresslessUI
 {
@@ -16,6 +17,8 @@ namespace StresslessUI
 
             Exception ex = (Exception)args.ExceptionObject;
                 logger.Error<Exception>(ex.Message, ex);
+
+            MessageBox.Show(ex.Message + ex);
         }
     }
 }

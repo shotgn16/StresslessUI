@@ -24,7 +24,7 @@ namespace StresslessUI.Http.Methods
         {
             if (string.IsNullOrEmpty(OAuthTokenModel._model.token))
             {
-                (string, HttpStatusCode) response = await _httpWrapper.PostAsync($"https://{AppSettings.Default.HostAddress}:7257/Authorize",
+                (string, HttpStatusCode) response = await _httpWrapper.PostAsync($"https://{AppSettings.Default.HostAddress}:7257/Data/Authorize",
                 new StringContent(JsonConvert.SerializeObject(new AuthorizationModel
                 {
                     MACAddress = await Networks.getMAC(),
@@ -42,7 +42,7 @@ namespace StresslessUI.Http.Methods
             {
                 await _httpWrapper.SetAuthorizationHeader("Bearer", OAuthTokenModel._model.token);
 
-                (string, HttpStatusCode) response = await _httpWrapper.PostAsync($"https://{AppSettings.Default.HostAddress}:7257/InsertConfiguration",
+                (string, HttpStatusCode) response = await _httpWrapper.PostAsync($"https://{AppSettings.Default.HostAddress}:7257/Data/InsertConfiguration",
                     new StringContent(JsonConvert.SerializeObject(ConfigurationModel._model), Encoding.UTF8, "application/json"));
 
                 if (response.Item2 != HttpStatusCode.OK)
@@ -60,7 +60,7 @@ namespace StresslessUI.Http.Methods
             {
                 await _httpWrapper.SetAuthorizationHeader("Bearer", OAuthTokenModel._model.token);
 
-                (string, HttpStatusCode) response = await _httpWrapper.GetAsync($"https://{AppSettings.Default.HostAddress}:7257/GetConfiguration");
+                (string, HttpStatusCode) response = await _httpWrapper.GetAsync($"https://{AppSettings.Default.HostAddress}:7257/Data/GetConfiguration");
 
                 if (response.Item2 != HttpStatusCode.OK || string.IsNullOrEmpty(response.Item1))
                 {
@@ -85,7 +85,7 @@ namespace StresslessUI.Http.Methods
             {
                 await _httpWrapper.SetAuthorizationHeader("Bearer", OAuthTokenModel._model.token);
 
-                (string, HttpStatusCode) response = await _httpWrapper.DeleteAsync($"https://{AppSettings.Default.HostAddress}:7257/DeleteConfiguration");
+                (string, HttpStatusCode) response = await _httpWrapper.DeleteAsync($"https://{AppSettings.Default.HostAddress}:7257/Data/DeleteConfiguration");
 
                 if (response.Item2 != HttpStatusCode.OK || string.IsNullOrEmpty(response.Item1))
                 {
@@ -103,7 +103,7 @@ namespace StresslessUI.Http.Methods
             {
                 await _httpWrapper.SetAuthorizationHeader("Bearer", OAuthTokenModel._model.token);
 
-                (string, HttpStatusCode) response = await _httpWrapper.PostAsync($"https://{AppSettings.Default.HostAddress}:7257/PromptReminder",
+                (string, HttpStatusCode) response = await _httpWrapper.PostAsync($"https://{AppSettings.Default.HostAddress}:7257/Data/PromptReminder",
                     new StringContent(null, Encoding.UTF8, "application/json"));
 
                 Value = response.Item1;

@@ -42,9 +42,6 @@ namespace StresslessUI.Logic
                     calenderEvent.Location = "Not Specified";
                 }
 
-                // Will only get events 4 days in advance from the current day!
-                // + Will only show events that are on days specified in the 'Working Days' Array
-
                 List<DayOfWeek> WorkingDays = await ConvertStringToDayOfWeek(ConfigurationModel._model.WorkingDays);
 
                 if (calenderEvent.DtStart.Value >= DateTime.Now.Date &&

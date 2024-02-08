@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using NLog;
 using NLog.Extensions.Logging;
 using StresslessUI.Http.ErrorHandler;
 using StresslessUI.Http.Methods;
@@ -16,12 +17,15 @@ namespace StresslessUI
     public partial class App : Application
     {
         private IServiceProvider _serviceProvider;
+        Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+        public App()
+        {
+            AppDomain appDomain = AppDomain.CurrentDomain;
+            appDomain.UnhandledException += new UnhandledExceptionEventHandler(exceptionHandler.OnUnhandledException);
+        }
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            AppDomain appDomain = AppDomain.CurrentDomain;
-                appDomain.UnhandledException += new UnhandledExceptionEventHandler(exceptionHandler.OnUnhandledException);
-
             base.OnStartup(e);
             ConfigureServices();
             ShowHomePage();
@@ -29,50 +33,63 @@ namespace StresslessUI
 
         private void ConfigureServices()
         {
-            // Register WPF Pages...
-            var serviceCollection = new ServiceCollection();
+            try
+            {
+                // Register WPF Pages...
+                var serviceCollection = new ServiceCollection();
                 serviceCollection.AddSingleton<MainWindow>();
                 serviceCollection.AddScoped<RegistrationForm>();
                 serviceCollection.AddScoped<LoggedInForm>();
                 serviceCollection.AddScoped<SettingsForm>();
 
-            // Register NLog logger
-            serviceCollection.AddLogging(builder => builder.AddNLog());
-            serviceCollection.AddHttpLogging(e =>
+                // Register NLog logger
+                serviceCollection.AddLogging(builder => builder.AddNLog());
+                serviceCollection.AddHttpLogging(e =>
+                {
+                    e.LoggingFields = Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.All;
+                });
+
+                // Register App Services
+                serviceCollection.AddTransient<IHttpClientMethods, httpMethods>();
+                serviceCollection.AddTransient<IHttpWrapper, HttpWrapper>();
+                serviceCollection.AddTransient<IHttpError, HttpError>();
+                serviceCollection.AddTransient<ICalenderImport, CalendarImport>();
+
+                // Register IHttpClientFactory
+                serviceCollection.AddHttpClient();
+
+                serviceCollection.AddSingleton<Frame>(provider =>
+                {
+                    var mainWindow = provider.GetRequiredService<MainWindow>();
+                    return new Frame { Content = mainWindow };
+                });
+
+                // Register navigation service
+                serviceCollection.
+                    AddSingleton<INaviationService, NavigationService>();
+
+                // Build the container
+                _serviceProvider = serviceCollection.BuildServiceProvider();
+
+                // Set the container as the 'Autofac' DI container
+                ContainerProvider.SetContainerProvider(_serviceProvider);
+            }
+
+            catch (Exception ex)
             {
-                e.LoggingFields = Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.All;
-            });
-
-            // Register App Services
-            serviceCollection.AddTransient<IHttpClientMethods, httpMethods>();
-            serviceCollection.AddTransient<IHttpWrapper, HttpWrapper>();
-            serviceCollection.AddTransient<IHttpError, HttpError>();
-            serviceCollection.AddTransient<ICalenderImport, CalendarImport>();
-
-            // Register IHttpClientFactory
-            serviceCollection.AddHttpClient();
-
-            serviceCollection.AddSingleton<Frame>(provider =>
-            {
-                var mainWindow = provider.GetRequiredService<MainWindow>();
-                return new Frame { Content = mainWindow };
-            });
-
-            // Register navigation service
-            serviceCollection.
-                AddSingleton<INaviationService, NavigationService>();
-
-            // Build the container
-            _serviceProvider = serviceCollection.BuildServiceProvider();
-
-            // Set the container as the 'Autofac' DI container
-            ContainerProvider.SetContainerProvider(_serviceProvider);
+                _logger.Error(ex.Message, ex);
+            }
         }
 
         private void ShowHomePage()
         {
             var mainPage = _serviceProvider.GetService<MainWindow>();
-            mainPage.ShowDialog();
+            mainPage.Show();
+        }
+
+        private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+        {
+            System.Windows.MessageBox.Show(e.Exception.ToString());
         }
     }
 }

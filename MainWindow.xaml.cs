@@ -9,7 +9,7 @@ namespace StresslessUI
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, IMainWindow
     {
         private IHttpClientMethods _httpMethods;
         private IServiceProvider _serviceProvider;
@@ -21,20 +21,21 @@ namespace StresslessUI
             _httpMethods = httpClientMethods;
             _serviceProvider = serviceProvider;
 
+            checkConfiguration();
             InitializeComponent();
-            LoginUser();
 
             _logger.LogInformation($"MainWindow Loaded! | App Version: 2 | Date: {DateOnly.FromDateTime(DateTime.Now)}");
         }
-        private async Task LoginUser()
+        private async Task checkConfiguration()
         {
-            bool configExists = await retrieveConfig();
+            await _httpMethods.Authorize();
+            ConfigurationModel _localConfiguration = await _httpMethods.GetConfiguration();
 
             try
             {
-                if (configExists == true)
+                if (_localConfiguration != null)
                 {
-
+                    var loggedUser = _serviceProvider.GetService<LoggedInForm>();
                     this.Hide();
                 }
             }
@@ -43,30 +44,6 @@ namespace StresslessUI
             {
                 _logger.LogError(ex.Message, ex);
             }
-        }
-
-        private async Task<bool> retrieveConfig()
-        {
-            bool Value = false;
-
-            try
-            {
-                await _httpMethods.Authorize();
-                ConfigurationModel _localInstance = await _httpMethods.GetConfiguration();
-
-                if (_localInstance != null)
-                {
-                    ConfigurationModel._model = _localInstance;
-                    Value = true;
-                }
-            }
-
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message, ex);
-            }
-
-            return Value;
         }
 
         private void btn_settings_Click(object sender, RoutedEventArgs e)
@@ -79,6 +56,11 @@ namespace StresslessUI
         {
             var registrationPage = _serviceProvider.GetService<RegistrationForm>();
             registrationPage.Show();
+        }
+
+        public void Show()
+        {
+            this.ShowDialog();
         }
     }
 }
