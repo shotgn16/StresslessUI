@@ -97,7 +97,7 @@ namespace StresslessUI.Http.Methods
             return Value;
         }
 
-        public async Task<bool> PromptReminder(bool Value = false)
+        public async Task<string> PromptReminder(string Value = null)
         {
             if (!string.IsNullOrEmpty(OAuthTokenModel._model.token))
             {
@@ -106,7 +106,7 @@ namespace StresslessUI.Http.Methods
                 (string, HttpStatusCode) response = await _httpWrapper.PostAsync($"https://{AppSettings.Default.HostAddress}:7257/PromptReminder",
                     new StringContent(null, Encoding.UTF8, "application/json"));
 
-                Value = Convert.ToBoolean(response.Item1);
+                Value = response.Item1;
 
                 if (response.Item2 != HttpStatusCode.OK)
                 {

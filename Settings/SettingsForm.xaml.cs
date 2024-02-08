@@ -28,6 +28,7 @@ namespace StresslessUI
             }
 
             AppSettings.Default.Save();
+            _logger.LogInformation("Microservice Address Updated! [{0}]", AppSettings.Default.HostAddress);
             this.Hide();
         }
 

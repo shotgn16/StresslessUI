@@ -1,9 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using StresslessUI.Http.Methods;
-using System.Printing;
 using System.Timers;
 using System.Windows;
-using static System.Net.WebRequestMethods;
 
 namespace StresslessUI.Timer
 {
@@ -39,11 +37,11 @@ namespace StresslessUI.Timer
         {
             _timer.Stop();
             isActive = false;
-            bool promptUser = false;
+            string promptUser;
 
             promptUser = await _httpMethods.PromptReminder();
 
-            if (promptUser)
+            if (promptUser == "True" || promptUser == "true")
             {
                 MessageBox.Show(
                     "Time to take a 20 minuit break!", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
