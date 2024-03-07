@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using StresslessUI.DataModels;
 using StresslessUI.Http.Methods;
 using System.Windows;
@@ -37,6 +38,8 @@ namespace StresslessUI
                 {
                     var loggedUser = _serviceProvider.GetService<LoggedInForm>();
                     this.Hide();
+
+                    _logger.LogInformation("Class: 'MainWindow' | Function: 'CheckConfiguration' Window Status: ", loggedUser.WindowState);
                 }
             }
 
@@ -50,17 +53,30 @@ namespace StresslessUI
         {
             var settingsPage = _serviceProvider.GetService<SettingsForm>();
             settingsPage.Show();
+
+            _logger.LogInformation("Class: 'MainWindow' | Function: 'OpenSettings' Window Status: ", settingsPage.WindowState);
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             var registrationPage = _serviceProvider.GetService<RegistrationForm>();
             registrationPage.Show();
+
+            _logger.LogInformation("Class: 'MainWindow' | Function: 'OpenRegistration' Window Status: ", registrationPage.WindowState);
         }
 
         public void Show()
         {
-            this.ShowDialog();
+            try
+            {
+                this.ShowDialog();
+                _logger.LogInformation("Class: 'MainWindow' | Function: 'Show' Status: Success");
+            }
+
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message, ex);
+            }
         }
     }
 }

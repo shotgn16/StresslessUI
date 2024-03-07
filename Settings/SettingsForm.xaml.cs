@@ -18,6 +18,8 @@ namespace StresslessUI
             InitializeComponent();
             
             tbx_hostAddress.Text = AppSettings.Default.HostAddress;
+
+            _logger.LogInformation($"Settings Loaded! | App Version: 0.2 | Date: {DateOnly.FromDateTime(DateTime.Now)}");
         }
 
         private void btn_save_Click(object sender, RoutedEventArgs e)
@@ -28,7 +30,7 @@ namespace StresslessUI
             }
 
             AppSettings.Default.Save();
-            _logger.LogInformation("Microservice Address Updated! [{0}]", AppSettings.Default.HostAddress);
+            _logger.LogInformation("Class: 'Settings' | Function: 'UpdateServiceAddress' Address: " + AppSettings.Default.HostAddress);
             this.Hide();
         }
 
@@ -37,26 +39,56 @@ namespace StresslessUI
             string currentDate = DateTime.Now.ToString("yyyy-MM-dd");
             string filePath = @".\logging\ServiceLog-" + currentDate + ".txt";
 
-            if (File.Exists(filePath))
+            try
             {
-                string content = await File.ReadAllTextAsync(filePath);
-                string[] lines = content.Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
-
-                foreach (string line in lines)
+                if (File.Exists(filePath))
                 {
-                    tbx_logs.Text += line + Environment.NewLine;
+                    string content = await File.ReadAllTextAsync(filePath);
+                    string[] lines = content.Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
+
+                    foreach (string line in lines)
+                    {
+                        tbx_logs.Text += line + Environment.NewLine;
+                    }
+
+                    _logger.LogInformation("Class: 'Settings' | Function: 'readLogFile' File: " + filePath);
                 }
+            }
+
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message, ex);
             }
         }
 
         public void Show()
         {
-            this.ShowDialog();
+            try
+            {
+                this.ShowDialog();
+                _logger.LogInformation("Class: 'Settings' | Function: 'Show' Status: Success");
+            }
+
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message, ex);
+            }
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            readLogfile();
+            try
+            {
+                var task = readLogfile();
+                task.Start();
+
+                _logger.LogInformation("Class: 'Settings' | Function: 'ReadLogs' Status: " + task.Status);
+            }
+
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message, ex);
+            }
         }
     }
 }

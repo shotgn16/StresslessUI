@@ -32,6 +32,7 @@ namespace StresslessUI.Http.Methods
                 }),
                 Encoding.UTF8, "application/json"));
 
+                _logger.LogInformation("Class: 'HttpMethods' | Function: 'Authorizee' | Status - ", response.Item2 + "\n" + response.Item1);
                 OAuthTokenModel._model = JsonConvert.DeserializeObject<OAuthTokenModel>(response.Item1);
             }
         }
@@ -49,6 +50,8 @@ namespace StresslessUI.Http.Methods
                 {
                     _logger.LogError(response.Item2 + "\n" + response.Item1);
                 }
+
+                _logger.LogInformation("Class: 'HttpMethods' | Function: 'InsertConfiguration' | Status - ", response.Item2 + "\n" + response.Item1);
             }
         }
 
@@ -68,6 +71,7 @@ namespace StresslessUI.Http.Methods
                     _logger.LogError(response.Item2 + "\n" + response.Item1);
                 }
 
+                _logger.LogInformation("Class: 'HttpMethods' | Function: 'GetConfiguration' | Status - ", response.Item2 + "\n" + response.Item1);
                 _config = JsonConvert.DeserializeObject<ConfigurationModel>(response.Item1);
             }
 
@@ -80,20 +84,21 @@ namespace StresslessUI.Http.Methods
         public async Task<bool> DeleteConfiguration()
         {
             bool Value = true;
+            (string, HttpStatusCode) response = new();
 
             if (OAuthTokenModel._model != null)
             {
                 await _httpWrapper.SetAuthorizationHeader("Bearer", OAuthTokenModel._model.token);
 
-                (string, HttpStatusCode) response = await _httpWrapper.DeleteAsync($"https://{AppSettings.Default.HostAddress}:7257/Data/DeleteConfiguration");
+                response = await _httpWrapper.DeleteAsync($"https://{AppSettings.Default.HostAddress}:7257/Data/DeleteConfiguration");
 
                 if (response.Item2 != HttpStatusCode.OK || string.IsNullOrEmpty(response.Item1))
                 {
                     Value = false;
-                    _logger.LogError(response.Item2 + "\n" + response.Item1);
                 }
             }
 
+            _logger.LogInformation("Class: 'HttpMethods' | Function: 'DeleteConfiguration' | Status - ", response.Item2 + "\n" + response.Item1);
             return Value;
         }
 
@@ -112,6 +117,8 @@ namespace StresslessUI.Http.Methods
                 {
                     _logger.LogError(response.Item2 + "\n" + response.Item1);
                 }
+
+                _logger.LogInformation("Class: 'HttpMethods' | Function: 'PromptReminder' | Status - ", response.Item2 + "\n" + response.Item1);
             }
 
             return Value;

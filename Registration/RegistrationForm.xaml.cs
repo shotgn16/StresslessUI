@@ -46,6 +46,8 @@ namespace StresslessUI
 
                 grid_registrationComplete.Visibility = Visibility.Visible;
                     tbx_configurationOutput.Text = JsonConvert.SerializeObject(ConfigurationModel._model);
+
+                _logger.LogInformation("Class: 'Registration' | Function: 'UserRegistration' Status: Success\n" + JsonConvert.SerializeObject(ConfigurationModel._model, Formatting.Indented));
             }
 
             catch (Exception ex)
@@ -56,7 +58,16 @@ namespace StresslessUI
 
         public void Show()
         {
-            this.ShowDialog();
+            try
+            {
+                this.ShowDialog();
+                _logger.LogInformation("Class: 'Registration' | Function: 'Show' Status: Success");
+            }
+
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message, ex);
+            }
         }
     }
 }

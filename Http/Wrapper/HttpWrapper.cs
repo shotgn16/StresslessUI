@@ -23,17 +23,24 @@ namespace StresslessUI.Http.Wrapper
             _httpError = httpError;
 
             _httpClient = _httpClientFactory.CreateClient();
+
+            _logger.LogInformation("Class: 'HttpWrapper' | Function: 'Initize' | Status - \n" 
+                + "Logger: " + _logger.IsEnabled + "\n" 
+                + "HttpError: " + _httpError.ToString() + "\n" 
+                + "HttpClientFactory:" + _httpClientFactory.ToString()
+                );
         }
 
         public async Task SetAuthorizationHeader(string header, string value)
         {
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(header, OAuthTokenModel._model.token);
+                _logger.LogInformation("Class 'HttpWrapper' | Function: 'SetAuthorizationHeader' | Token - " + OAuthTokenModel._model.token);
         }
 
         public async Task<(string, HttpStatusCode)> GetAsync(string url)
         {
             HttpResponseMessage response = await _httpClient.GetAsync(url);
-            (string, HttpStatusCode) Return;
+            (string, HttpStatusCode) Return = new();
 
             if (!response.IsSuccessStatusCode)
             {
@@ -41,13 +48,14 @@ namespace StresslessUI.Http.Wrapper
                 Return.Item2 = response.StatusCode;
             }
 
+            _logger.LogInformation("Class 'HttpWrapper' | Function: 'GetAsync' | Status - " + Return.Item2);
             return (await response.Content.ReadAsStringAsync(), response.StatusCode);
         }
 
         public async Task<(string, HttpStatusCode)> PostAsync(string url, HttpContent content)
         {
             HttpResponseMessage response = await _httpClient.PostAsync(url, content);
-            (string, HttpStatusCode) Return;
+            (string, HttpStatusCode) Return = new();
 
             if (!response.IsSuccessStatusCode)
             {
@@ -55,13 +63,14 @@ namespace StresslessUI.Http.Wrapper
                 Return.Item2 = response.StatusCode;
             }
 
+            _logger.LogInformation("Class 'HttpWrapper' | Function: 'PostAsync' | Status - " + Return.Item2);
             return (await response.Content.ReadAsStringAsync(), response.StatusCode);
         }
 
         public async Task<(string, HttpStatusCode)> DeleteAsync(string url)
         {
             HttpResponseMessage response = await _httpClient.DeleteAsync(url);
-            (string, HttpStatusCode) Return;
+            (string, HttpStatusCode) Return = new();
 
             if (!response.IsSuccessStatusCode)
             {
@@ -69,6 +78,7 @@ namespace StresslessUI.Http.Wrapper
                 Return.Item2 = response.StatusCode;
             }
 
+            _logger.LogInformation("Class 'HttpWrapper' | Function: 'DeleteAsync' | Status - " + Return.Item2);
             return (await response.Content.ReadAsStringAsync(), response.StatusCode);
         }
 

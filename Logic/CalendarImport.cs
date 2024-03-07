@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using StresslessUI.DataModels;
 using System.Net;
 
@@ -28,6 +29,8 @@ namespace StresslessUI.Logic
                 }
             }
 
+            _logger.LogInformation("Class: 'CalendarImport' | Function: 'DownloadCalendar' URL: " + _url);
+
             return calenderString;
         }
 
@@ -35,33 +38,43 @@ namespace StresslessUI.Logic
         {
             Ical.Net.Calendar calender = Ical.Net.Calendar.Load(await downloadCalender(_url));
 
-            foreach (var calenderEvent in calender.Events)
+            try
             {
-                if (string.IsNullOrEmpty(calenderEvent.Location))
+                foreach (var calenderEvent in calender.Events)
                 {
-                    calenderEvent.Location = "Not Specified";
-                }
-
-                List<DayOfWeek> WorkingDays = await ConvertStringToDayOfWeek(ConfigurationModel._model.WorkingDays);
-
-                if (calenderEvent.DtStart.Value >= DateTime.Now.Date &&
-                    calenderEvent.DtEnd.Value <= DateTime.Now.Date.AddDays(4) &&
-                    WorkingDays.Contains(calenderEvent.DtStart.Value.DayOfWeek))
-                {
-                    DateTime sDate = calenderEvent.DtStart.Value;
-                    DateTime eDate = calenderEvent.DtEnd.Value;
-
-                    _List = new List<CalendarModel>();
-
-                    _List.Add(new CalendarModel()
+                    if (string.IsNullOrEmpty(calenderEvent.Location))
                     {
-                        StartTime = TimeOnly.FromDateTime(sDate),
-                        EventDate = DateOnly.FromDateTime(calenderEvent.DtStart.Value),
-                        EndTime = TimeOnly.FromDateTime(eDate),
-                        Location = calenderEvent.Location,
-                        Name = calenderEvent.Summary
-                    });
+                        calenderEvent.Location = "Not Specified";
+                    }
+
+                    List<DayOfWeek> WorkingDays = await ConvertStringToDayOfWeek(ConfigurationModel._model.WorkingDays);
+
+                    if (calenderEvent.DtStart.Value >= DateTime.Now.Date &&
+                        calenderEvent.DtEnd.Value <= DateTime.Now.Date.AddDays(4) &&
+                        WorkingDays.Contains(calenderEvent.DtStart.Value.DayOfWeek))
+                    {
+                        DateTime sDate = calenderEvent.DtStart.Value;
+                        DateTime eDate = calenderEvent.DtEnd.Value;
+
+                        _List = new List<CalendarModel>();
+
+                        _List.Add(new CalendarModel()
+                        {
+                            StartTime = TimeOnly.FromDateTime(sDate),
+                            EventDate = DateOnly.FromDateTime(calenderEvent.DtStart.Value),
+                            EndTime = TimeOnly.FromDateTime(eDate),
+                            Location = calenderEvent.Location,
+                            Name = calenderEvent.Summary
+                        });
+                    }
                 }
+
+                _logger.LogInformation("Class: 'CalendarImport' | Function: 'retrieveEvents' Status: Success\n");
+            }
+
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message, ex);
             }
 
             return _List;
@@ -71,19 +84,29 @@ namespace StresslessUI.Logic
         {
             List<DayOfWeek> DayList = new List<DayOfWeek>();
 
-            foreach (string Day in strArray)
+            try
             {
-                switch (Day)
+                foreach (string Day in strArray)
                 {
-                    case "Monday": DayList.Add(DayOfWeek.Monday); break;
-                    case "Tuesday": DayList.Add(DayOfWeek.Tuesday); break;
-                    case "Wednesday": DayList.Add(DayOfWeek.Wednesday); break;
-                    case "Thursday": DayList.Add(DayOfWeek.Thursday); break;
-                    case "Friday": DayList.Add(DayOfWeek.Friday); break;
-                    case "Saturday": DayList.Add(DayOfWeek.Saturday); break;
-                    case "Sunday": DayList.Add(DayOfWeek.Sunday); break;
-                    default: throw new ArgumentException("Invalid day of week");
+                    switch (Day)
+                    {
+                        case "Monday": DayList.Add(DayOfWeek.Monday); break;
+                        case "Tuesday": DayList.Add(DayOfWeek.Tuesday); break;
+                        case "Wednesday": DayList.Add(DayOfWeek.Wednesday); break;
+                        case "Thursday": DayList.Add(DayOfWeek.Thursday); break;
+                        case "Friday": DayList.Add(DayOfWeek.Friday); break;
+                        case "Saturday": DayList.Add(DayOfWeek.Saturday); break;
+                        case "Sunday": DayList.Add(DayOfWeek.Sunday); break;
+                        default: throw new ArgumentException("Invalid day of week");
+                    }
                 }
+
+                _logger.LogInformation("Class: 'CalendarImport' | Function: 'ConvertStringToDayOfWeek' Status: Success\n" + DayList.ToArray());
+            }
+
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message, ex);
             }
 
             return DayList;
